@@ -11,6 +11,26 @@ namespace MvcNetCoreLinqToSql.Controllers.Empleados
         {
             this.repo = new RepositoryEmpleados();
         }
+        public IActionResult DatosEmpleadosOficios()
+        {
+            ViewData["DEPARTAMENTOS"] = this.repo.GetDepartamentos();
+            return View();
+        }
+        [HttpPost]
+        public IActionResult DatosEmpleadosOficios(int departamento)
+        {
+            ViewData["DEPARTAMENTOS"] = this.repo.GetDepartamentos();
+            ResumenEmpleados model = this.repo.GetEmpleadosDepartamento(departamento);
+            if (model == null)
+            {
+                ViewData["MENSAJEERROR"] = "No existe el departamento" + model;
+                return View();
+            }
+            else
+            {
+                return View(model);
+            }      
+        }
         public IActionResult DatosEmpleados()
         {
             ViewData["OFICIOS"] = this.repo.GetOficios();

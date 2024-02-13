@@ -1,0 +1,59 @@
+﻿@model ResumenEmpleados
+
+@{
+    List<int> departamentos = ViewData["DEPARTAMENTOS"] as List<int>;
+}
+
+
+<h1>Lambda Empleados Departamentos</h1>
+
+<form method="post">
+    <label>Seleccione un Departamento</label>
+    <select name="departamento">
+        @foreach (int departamento in departamentos)
+        {
+            <option value="@departamento">@departamento</option>
+        }
+    </select>
+    <button class="btn btn-info">
+        Mostrar resumen
+    </button>
+</form>
+
+<h2 style="color:red">
+    @ViewData["MENSAJEERROR"]
+</h2>
+
+@if (Model != null)
+{
+    <ul class="list-group">
+        <li class="list-group-item">
+            Personas: @Model.Personas
+        </li>
+        <li class="list-group-item">
+            Maximo salario: @Model.MaximoSalario
+        </li>
+        <li class="list-group-item">
+            Media salarial: @Model.MediaSalarial
+        </li>
+    </ul>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Apellidos</th>
+                <th>Oficio</th>
+                <th>Salario</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Empleado emp in Model.Empleados)
+            {
+                <tr>
+                    <td>@emp.Apellido</td>
+                    <td>@emp.Oficio</td>
+                    <td>@emp.Salario</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

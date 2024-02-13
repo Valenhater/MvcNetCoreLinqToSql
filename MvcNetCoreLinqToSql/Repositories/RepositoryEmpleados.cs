@@ -18,6 +18,53 @@ namespace MvcNetCoreLinqToSql.Repositories
             //Traemos los datos
             adEmp.Fill(tablaEmpleados);
         }
+        //METODO PARA FILTRAR EMPLEADOS POR SU DEPARTAMENTO
+        public ResumenEmpleados GetEmpleadosDepartamento(int departamento)
+        {
+            var consulta = from datos in this.tablaEmpleados.AsEnumerable()
+                           where datos.Field<int>("DEPT_NO") == departamento
+                           select datos;
+            //Me gustaria que los datos esten ordenados por salario
+            consulta = consulta.OrderBy(x => x.Field<int>("SALARIO"));
+            int personas = consulta.Count();
+            int maximo = consulta.Max(z => z.Field<int>("SALARIO"));
+            double media = consulta.Average(x => x.Field<int>("SALARIO"));
+            List<Empleado> empleados = new List<Empleado>();
+            foreach (var row in consulta)
+            {
+                Empleado emp = new Empleado
+                {
+                    IdEmpleado = row.Field<int>("EMP_NO"),
+                    Apellido = row.Field<string>("APELLIDO"),
+                    Oficio = row.Field<string>("OFICIO"),
+                    Salario = row.Field<int>("SALARIO"),
+                    IdDepartamento = row.Field<int>("DEPT_NO")
+                };
+                empleados.Add(emp);
+            }
+            ResumenEmpleados resumen = new ResumenEmpleados
+            {
+                Personas = personas,
+                MaximoSalario = maximo,
+                MediaSalarial = media,
+                Empleados = empleados
+            };
+            return resumen;
+        }
+
+        //FILTRAR POR DEPARTAMENTO
+        public List<int> GetDepartamentos()
+        {
+            var consulta = (from datos in this.tablaEmpleados.AsEnumerable()
+                            select datos.Field<int>("DEPT_NO")).Distinct();
+            List<int> departamentos = new List<int>();
+            foreach (int dept in consulta)
+            {
+                departamentos.Add(dept);
+            }
+            return departamentos;
+        }
+
 
         //METODO PARA GILTRAR EMPLEADOS POR SU OFICIO
         public ResumenEmpleados GetEmpleadosOficio(string oficio)
